@@ -13,21 +13,62 @@
   </head>
   <body>
     <h1>Markdown Editor Gorae</h1>
-    <div style="display: flex; flex-direction: row; gap: 10px; background-color: red; width: 200px; height: 200px;">
+    <div style="display: flex; flex-direction: row; gap: 10px; background-color: red; width: 200px; height: 200px;" 
+         id="drop-area">
       <textarea style="width: 50%; height: 100%; resize: none;" id="markdown-editor" placeholder="마크다운을 작성해주세요!"></textarea>
-      <textarea style="width: 50%; height: 100%; resize: none; overflow: auto;" class="preview" id="preview" readonly></textarea>
+      <div style="width: 50%; height: 100%; resize: none; overflow: auto;" class="preview" id="markdown-preview" readonly></div>
+    </div>
+    <div>
+      <div id="html-preview"></div>
     </div>
   </body>
   <script>
     const markdownEditor = document.getElementById('markdown-editor');
-    const preview = document.getElementById('preview');
+    const markdownPreview = document.getElementById('markdown-preview');
+    const htmlPreview = document.getElementById('html-preview');
 
-    markdownEditor.addEventListener('input', () => {
-      preview.value = markdownEditor.value;
 
-      const cursorPosition = markdownEditor.scrollTop; 
-      preview.scrollTop = cursorPosition; 
+    const dropArea = document.getElementById('drop-area');
+
+    dropArea.addEventListener('dragover', (event) => {
+      event.preventDefault(); 
     });
+
+    dropArea.addEventListener('drop', (event) => {
+      event.preventDefault(); 
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        const file = files[0];
+        const blob = new Blob([file], { type: file.type });
+        console.log(blob); 
+      }
+    });
+
+    
+    markdownEditor.addEventListener('input', () => {
+      let userInput = markdownEditor.value;
+      userInput = userInput.split('\n');
+
+      let html = '';
+
+      userInput.forEach((line) => {
+        if (line.startsWith('##')) {
+          const headerText = line.slice(2).trim(); 
+          html += `<h2>${headerText}</h2>`;
+        } else if (line.startsWith('#')) {
+          const headerText = line.slice(1).trim(); 
+          html += `<h1>${headerText}</h1>`;
+        } else {
+          html += `<p>${line}</p>`;
+        }
+      });
+
+      htmlPreview.innerHTML = html;
+
+      const cursorPosition = markdownEditor.scrollTop;
+      markdownPreview.scrollTop = cursorPosition;
+    });
+
   </script>
 </html>
 

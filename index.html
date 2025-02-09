@@ -44,7 +44,7 @@
       }
     });
 
-    
+
     markdownEditor.addEventListener('input', () => {
       let userInput = markdownEditor.value;
       userInput = userInput.split('\n');
@@ -52,12 +52,26 @@
       let html = '';
 
       userInput.forEach((line) => {
-        if (line.startsWith('##')) {
+        if (line.startsWith('## ')) {
           const headerText = line.slice(2).trim(); 
           html += `<h2>${headerText}</h2>`;
-        } else if (line.startsWith('#')) {
+        } else if (line.startsWith('# ')) {
           const headerText = line.slice(1).trim(); 
           html += `<h1>${headerText}</h1>`;
+        } else if (line.startsWith('> ')) {
+          const headerText = line.slice(2).trim(); 
+          html += `<blockquote style="background-color: #f0f0f0; padding: 10px; border-left: 4px solid #000;">${headerText}</blockquote>`;
+        } else if (line.startsWith('* ')) {
+          const headerText = line.slice(1).trim(); 
+          html += `<ul><li>${headerText}</li></ul>`;
+        } else if (line.startsWith('1. ')) {
+          const headerText = line.slice(2).trim(); 
+          html += `<ol><li>${headerText}</li></ol>`;
+        } else if (line.startsWith('**')) {
+          const headerText = line.slice(2).trim(); 
+          html += `<strong>${headerText}</strong>`;
+        } else if (line.startsWith('http')) {
+          html += `<a href="${line}">${line}</a>`;
         } else {
           html += `<p>${line}</p>`;
         }
